@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cianela Doceria | Precificação Inteligente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#e11d48', // Rose 600 - Tom avermelhado padrão de apps de confeitaria
+                        primaryHover: '#be123c', // Rose 700
+                        bgApp: '#f9fafb', // Gray 50
+                        cardBg: '#ffffff',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f9fafb;
+            color: #111827;
+        }
+        .input-clean {
+            background-color: #f9fafb;
+            border: 1px solid #d1d5db;
+            color: #111827;
+            transition: all 0.2s ease;
+        }
+        .input-clean:focus {
+            border-color: #e11d48;
+            box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.1);
+            outline: none;
+            background-color: #ffffff;
+        }
+        .tab-btn {
+            color: #6b7280;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .tab-btn:hover {
+            color: #374151;
+        }
+        .active-tab {
+            color: #e11d48;
+            border-bottom: 2px solid #e11d48;
+            font-weight: 600;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+    </style>
+</head>
+<body class="min-h-screen font-sans flex flex-col">
+
+    <!-- HEADER ESTILO DOCEFY / LOVABLE -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm">
+                        <span class="text-white font-bold text-lg">C</span>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-gray-900">Cianela<span class="text-primary">.</span></span>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <nav class="hidden md:flex space-x-8 h-full">
+                    <button onclick="switchTab('precificador')" id="btn-precificador" class="tab-btn active-tab inline-flex items-center px-1 pt-1 text-sm">
+                        Precificação Inteligente
+                    </button>
+                    <button onclick="switchTab('estoque')" id="btn-estoque" class="tab-btn inline-flex items-center px-1 pt-1 text-sm">
+                        Biblioteca de Ingredientes
+                    </button>
+                    <button onclick="switchTab('cardapio')" id="btn-cardapio" class="tab-btn inline-flex items-center px-1 pt-1 text-sm">
+                        Receitas Favoritas
+                    </button>
+                </nav>
+
+                <!-- User Profile / Right side -->
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-500 text-sm font-medium">
+                        VC
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Navigation (visible only on small screens) -->
+        <div class="md:hidden flex border-t border-gray-100 bg-white overflow-x-auto no-scrollbar px-4">
+            <button onclick="switchTab('precificador')" id="btn-precificador-mobile" class="tab-btn active-tab whitespace-nowrap px-3 py-3 text-sm">Precificação</button>
+            <button onclick="switchTab('estoque')" id="btn-estoque-mobile" class="tab-btn whitespace-nowrap px-3 py-3 text-sm">Ingredientes</button>
+            <button onclick="switchTab('cardapio')" id="btn-cardapio-mobile" class="tab-btn whitespace-nowrap px-3 py-3 text-sm">Receitas</button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+        <!-- ================= ABA 1: PRECIFICAÇÃO ================= -->
+        <div id="tab-precificador" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Coluna Esquerda: Construtor -->
+            <div class="lg:col-span-8 space-y-6">
+                
+                <!-- Titulo da Receita -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="p-2 bg-rose-50 rounded-lg">
+                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        </div>
+                        <h2 id="product-title" class="text-xl font-semibold text-gray-900">Novo Item</h2>
+                    </div>
+
+                    <!-- Inserir Ingrediente -->
+                    <form id="form-recipe" class="flex flex-col sm:flex-row gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100 mb-6">
+                        <div class="flex-1 w-full">
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Ingrediente</label>
+                            <select id="recipe-ingredient" required class="w-full input-clean rounded-lg p-2.5 text-sm cursor-pointer">
+                                <option value="">Selecione na biblioteca...</option>
+                            </select>
+                        </div>
+                        <div class="w-full sm:w-32">
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Qtd (g/ml)</label>
+                            <input type="number" id="recipe-qtd" required min="0.1" step="any" class="w-full input-clean rounded-lg p-2.5 text-sm" placeholder="Ex: 100">
+                        </div>
+                        <button type="submit" class="w-full sm:w-auto bg-primary text-white hover:bg-primaryHover font-medium py-2.5 px-6 rounded-lg transition-colors text-sm shadow-sm">
+                            Adicionar
+                        </button>
+                    </form>
+
+                    <!-- Lista de Ingredientes da Receita -->
+                    <div>
+                        <div class="flex justify-between text-xs font-medium text-gray-500 uppercase px-2 mb-2">
+                            <span>Ingredientes na Receita</span>
+                            <span>Custo</span>
+                        </div>
+                        <div id="recipe-items-container" class="space-y-2 max-h-[300px] overflow-y-auto pr-2 no-scrollbar">
+                            <!-- Gerado por JS -->
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center px-2">
+                            <span class="text-sm font-medium text-gray-600">Custo Total de Ingredientes</span>
+                            <span id="lbl-total-base-cost" class="text-lg font-bold text-gray-900">R$ 0,00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Variáveis de Custo -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-base font-semibold text-gray-900 mb-5 border-b border-gray-100 pb-3">2. Custos Variáveis & Fixos</h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Rendimento (Porções)</label>
+                            <input type="number" id="var-yield" value="1" min="1" class="w-full input-clean rounded-lg p-2.5 font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Embalagens (Total R$)</label>
+                            <input type="number" id="var-packaging" value="0.00" min="0" step="0.01" class="w-full input-clean rounded-lg p-2.5 font-medium">
+                        </div>
+                        <div>
+                            <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1.5">
+                                <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path></svg>
+                                Taxa de Variáveis / Perdas (%)
+                            </label>
+                            <input type="number" id="var-invisible" value="10" min="0" max="100" class="w-full input-clean rounded-lg p-2.5 font-medium text-gray-600">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-primary mb-1.5">Meta de Custo (CMV Alvo %)</label>
+                            <input type="number" id="var-cmv" value="35" min="1" max="100" class="w-full bg-rose-50 border border-rose-200 text-rose-900 rounded-lg p-2.5 font-bold focus:outline-none focus:ring-2 focus:ring-rose-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna Direita: O Veredito (Card de Resumo) -->
+            <div class="lg:col-span-4 sticky top-24">
+                <div class="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden">
+                    <div class="bg-gray-50 p-5 border-b border-gray-200 text-center">
+                        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Valor de Venda Sugerido</span>
+                        <div id="res-sale-price" class="text-4xl font-extrabold text-gray-900 mt-2 mb-1">
+                            R$ 0,00
+                        </div>
+                        <span class="text-xs text-gray-400">Porção Individual</span>
+                    </div>
+                    
+                    <div class="p-5 space-y-4">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600">Custo Total (Unidade)</span>
+                            <span id="res-total-cost" class="font-bold text-gray-900">R$ 0,00</span>
+                        </div>
+                        
+                        <!-- Breakdown Progress Bar simulada -->
+                        <div class="w-full bg-gray-100 rounded-full h-2 mb-1 overflow-hidden flex">
+                            <div class="bg-primary h-2" style="width: 35%"></div>
+                            <div class="bg-green-500 h-2" style="width: 65%"></div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center text-sm pt-2">
+                            <span class="text-gray-600">Lucro Bruto Unitário</span>
+                            <span id="res-profit" class="font-bold text-green-600">R$ 0,00</span>
+                        </div>
+
+                        <div class="mt-6 pt-4 border-t border-gray-100">
+                            <button class="w-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2.5 px-4 rounded-lg transition-colors text-sm flex justify-center items-center gap-2">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                                Salvar Receita (PDF)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= ABA 2: BIBLIOTECA DE INGREDIENTES ================= -->
+        <div id="tab-estoque" class="hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
+                <h2 class="text-lg font-semibold text-gray-900 mb-6">Cadastre seus ingredientes</h2>
+                
+                <form id="form-ingredient" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                    <div class="md:col-span-5">
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Nome do Ingrediente</label>
+                        <input type="text" id="ing-name" required class="w-full input-clean rounded-lg p-2.5 text-sm" placeholder="Ex: Leite Condensado Moça">
+                    </div>
+                    <div class="md:col-span-3">
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Qtd Embalagem (g/ml)</label>
+                        <input type="number" id="ing-size" required min="0.1" step="any" class="w-full input-clean rounded-lg p-2.5 text-sm" placeholder="395">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Valor Pago (R$)</label>
+                        <input type="number" id="ing-price" required min="0.01" step="0.01" class="w-full input-clean rounded-lg p-2.5 text-sm" placeholder="7.28">
+                    </div>
+                    <div class="md:col-span-2">
+                        <button type="submit" class="w-full bg-white border border-primary text-primary hover:bg-rose-50 font-medium py-2.5 px-4 rounded-lg transition-colors text-sm">
+                            Adicionar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tabela de Ingredientes -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                    <h3 class="font-semibold text-gray-700">Seus Ingredientes</h3>
+                    <span id="kpi-total-ingredients" class="bg-white border border-gray-200 text-gray-600 text-xs font-bold px-2.5 py-1 rounded-full">0</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs text-gray-500 bg-gray-50 uppercase">
+                            <tr>
+                                <th class="px-6 py-3 font-medium">Ingrediente</th>
+                                <th class="px-6 py-3 font-medium">Unidade / Embalagem</th>
+                                <th class="px-6 py-3 font-medium text-right">Custo Unit. (g/ml)</th>
+                                <th class="px-6 py-3 text-center font-medium">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ingredients-grid-container" class="divide-y divide-gray-100">
+                            <!-- Gerado por JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= ABA 3: RECEITAS FAVORITAS ================= -->
+        <div id="tab-cardapio" class="hidden">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Receitas Favoritas</h2>
+                <p class="text-sm text-gray-500 mt-1">Clique em uma de suas receitas base para carregá-la no painel de precificação.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Cards de Receitas -->
+                <div onclick="loadProductPreset('Pastel de Leite Ninho', 35, 2.50, 4)" class="bg-white border border-gray-200 p-5 rounded-2xl cursor-pointer hover:border-primary hover:shadow-md transition-all group">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
+                        </div>
+                        <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded">Preset</span>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">Pastel de Leite Ninho</h3>
+                    <p class="text-xs text-gray-500 mb-4">4 ingredientes • Box c/ 4 unid.</p>
+                    <div class="pt-3 border-t border-gray-100 flex justify-between items-center text-sm">
+                        <span class="text-gray-500">Usar Receita</span>
+                        <svg class="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </div>
+                </div>
+
+                <div onclick="loadProductPreset('Copo da Felicidade', 28, 1.80, 1)" class="bg-white border border-gray-200 p-5 rounded-2xl cursor-pointer hover:border-primary hover:shadow-md transition-all group">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
+                        </div>
+                        <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded">Preset</span>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">Copo da Felicidade</h3>
+                    <p class="text-xs text-gray-500 mb-4">Múltiplas camadas • Copo Bolha</p>
+                    <div class="pt-3 border-t border-gray-100 flex justify-between items-center text-sm">
+                        <span class="text-gray-500">Usar Receita</span>
+                        <svg class="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </div>
+                </div>
+
+                <div onclick="loadProductPreset('Brownie Gourmet', 30, 1.50, 1)" class="bg-white border border-gray-200 p-5 rounded-2xl cursor-pointer hover:border-primary hover:shadow-md transition-all group">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
+                        </div>
+                        <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded">Preset</span>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">Brownie Gourmet</h3>
+                    <p class="text-xs text-gray-500 mb-4">Crocante e Úmido • Unidade Kraft</p>
+                    <div class="pt-3 border-t border-gray-100 flex justify-between items-center text-sm">
+                        <span class="text-gray-500">Usar Receita</span>
+                        <svg class="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MOTOR JAVASCRIPT IDÊNTICO À VERSÃO ANTERIOR (FUNCIONALIDADE PRESERVADA) -->
+    <script>
+        // Dados de Default garantidos
+        const initialIngredients = [
+            { id: "1", name: "Leite Moça Integral Lata", size: 395, price: 7.28, costPerGram: 7.28/395 },
+            { id: "2", name: "Leite Ninho Integral Pó", size: 400, price: 17.50, costPerGram: 17.50/400 },
+            { id: "3", name: "Nutella Balde", size: 3000, price: 200.00, costPerGram: 200/3000 },
+            { id: "4", name: "Açúcar de Confeiteiro", size: 500, price: 5.50, costPerGram: 5.50/500 },
+            { id: "5", name: "Chocolate Nobre Sicao", size: 1000, price: 50.00, costPerGram: 50/1000 },
+            { id: "6", name: "Morangos Frescos", size: 250, price: 7.50, costPerGram: 7.50/250 }
+        ];
+
+        let ingredients = JSON.parse(localStorage.getItem('cianela_db_ingredients')) || initialIngredients;
+        let recipe = [];
+        let currentProductName = "Nova Receita";
+
+        if (recipe.length === 0 && ingredients.length > 0) {
+            recipe = [
+                { ingredient: ingredients.find(i => i.id === "1"), qtd: 395 },
+                { ingredient: ingredients.find(i => i.id === "4"), qtd: 115 },
+                { ingredient: ingredients.find(i => i.id === "2"), qtd: 200 },
+                { ingredient: ingredients.find(i => i.id === "3"), qtd: 140 }
+            ];
+            currentProductName = "Pastel de Leite Ninho";
+        }
+
+        // Elementos DOM
+        const selectRecipeIngredient = document.getElementById('recipe-ingredient');
+        const recipeItemsContainer = document.getElementById('recipe-items-container');
+        const ingredientsGridContainer = document.getElementById('ingredients-grid-container');
+        
+        const inputYield = document.getElementById('var-yield');
+        const inputPackaging = document.getElementById('var-packaging');
+        const inputInvisible = document.getElementById('var-invisible');
+        const inputCmv = document.getElementById('var-cmv');
+
+        const resSalePrice = document.getElementById('res-sale-price');
+        const resTotalCost = document.getElementById('res-total-cost');
+        const resProfit = document.getElementById('res-profit');
+        const lblTotalBaseCost = document.getElementById('lbl-total-base-cost');
+        const kpiTotalIngredients = document.getElementById('kpi-total-ingredients');
+        const productTitle = document.getElementById('product-title');
+
+        const formatBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        // Navegação
+        window.switchTab = function(tabName) {
+            ['precificador', 'estoque', 'cardapio'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                document.getElementById(`btn-${t}`).classList.remove('active-tab');
+                const btnMobile = document.getElementById(`btn-${t}-mobile`);
+                if(btnMobile) btnMobile.classList.remove('active-tab');
+            });
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            document.getElementById(`btn-${tabName}`).classList.add('active-tab');
+            const activeMobile = document.getElementById(`btn-${tabName}-mobile`);
+            if(activeMobile) activeMobile.classList.add('active-tab');
+        };
+
+        // Insumos
+        document.getElementById('form-ingredient').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('ing-name').value.trim();
+            const size = parseFloat(document.getElementById('ing-size').value);
+            const price = parseFloat(document.getElementById('ing-price').value);
+
+            ingredients.push({
+                id: Date.now().toString(),
+                name, size, price,
+                costPerGram: price / size
+            });
+            
+            saveState();
+            renderAll();
+            this.reset();
+            document.getElementById('ing-name').focus();
+        });
+
+        window.deleteIngredient = function(id) {
+            ingredients = ingredients.filter(i => i.id !== id);
+            recipe = recipe.filter(item => item.ingredient.id !== id);
+            saveState();
+            renderAll();
+        };
+
+        // Receita
+        document.getElementById('form-recipe').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const ingId = selectRecipeIngredient.value;
+            const qtd = parseFloat(document.getElementById('recipe-qtd').value);
+
+            if(!ingId) return;
+            const targetIng = ingredients.find(i => i.id === ingId);
+            const existing = recipe.find(item => item.ingredient.id === ingId);
+            
+            if(existing) existing.qtd += qtd;
+            else recipe.push({ ingredient: targetIng, qtd });
+
+            renderRecipeList();
+            calculateMaster();
+            this.reset();
+        });
+
+        window.removeRecipeItem = function(index) {
+            recipe.splice(index, 1);
+            renderRecipeList();
+            calculateMaster();
+        };
+
+        // Presets
+        window.loadProductPreset = function(name, cmv, packaging, yieldVal) {
+            currentProductName = name;
+            inputCmv.value = cmv;
+            inputPackaging.value = packaging.toFixed(2);
+            inputYield.value = yieldVal;
+            
+            if (name === "Pastel de Leite Ninho") {
+                recipe = [
+                    { ingredient: ingredients.find(i => i.id === "1") || initialIngredients[0], qtd: 395 },
+                    { ingredient: ingredients.find(i => i.id === "4") || initialIngredients[3], qtd: 115 },
+                    { ingredient: ingredients.find(i => i.id === "2") || initialIngredients[1], qtd: 200 },
+                    { ingredient: ingredients.find(i => i.id === "3") || initialIngredients[2], qtd: 140 }
+                ];
+            } else {
+                recipe = [
+                    { ingredient: ingredients.find(i => i.id === "1") || initialIngredients[0], qtd: 395 },
+                    { ingredient: ingredients.find(i => i.id === "5") || initialIngredients[4], qtd: 150 }
+                ];
+            }
+
+            switchTab('precificador');
+            renderRecipeList();
+            calculateMaster();
+        };
+
+        // Renderização HTML
+        function renderAll() {
+            selectRecipeIngredient.innerHTML = '<option value="">Selecione na biblioteca...</option>';
+            ingredients.forEach(i => {
+                selectRecipeIngredient.innerHTML += `<option value="${i.id}">${i.name}</option>`;
+            });
+
+            ingredientsGridContainer.innerHTML = '';
+            ingredients.forEach(i => {
+                ingredientsGridContainer.innerHTML += `
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4 font-medium text-gray-900">${i.name}</td>
+                        <td class="px-6 py-4 text-gray-500">${i.size}g <span class="text-xs ml-1">(Pago: ${formatBRL(i.price)})</span></td>
+                        <td class="px-6 py-4 text-right font-mono text-gray-900">${formatBRL(i.costPerGram)}</td>
+                        <td class="px-6 py-4 text-center">
+                            <button onclick="deleteIngredient('${i.id}')" class="text-gray-400 hover:text-red-600 transition-colors">
+                                <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            kpiTotalIngredients.textContent = ingredients.length;
+            renderRecipeList();
+            calculateMaster();
+        }
+
+        function renderRecipeList() {
+            productTitle.textContent = currentProductName;
+            recipeItemsContainer.innerHTML = recipe.length === 0 
+                ? '<p class="text-xs text-gray-500 text-center py-4 bg-gray-50 rounded-lg border border-dashed border-gray-200">Receita vazia. Adicione ingredientes.</p>' 
+                : '';
+            
+            recipe.forEach((item, index) => {
+                const subTotal = item.ingredient.costPerGram * item.qtd;
+                recipeItemsContainer.innerHTML += `
+                    <div class="flex justify-between items-center p-3 hover:bg-gray-50 rounded-lg border border-transparent hover:border-gray-100 transition-colors group">
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">${item.ingredient.name}</p>
+                            <p class="text-xs text-gray-500 font-mono mt-0.5">${item.qtd}g</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="text-sm font-semibold text-gray-900">${formatBRL(subTotal)}</span>
+                            <button onclick="removeRecipeItem(${index})" class="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Matemática
+        function calculateMaster() {
+            const totalRecipeBaseCost = recipe.reduce((acc, item) => acc + (item.ingredient.costPerGram * item.qtd), 0);
+            
+            const yieldVal = parseFloat(inputYield.value) || 1;
+            const packagingTotal = parseFloat(inputPackaging.value) || 0;
+            const invisibleRate = parseFloat(inputInvisible.value) || 0;
+            const cmvTarget = parseFloat(inputCmv.value) || 35;
+
+            const unitBaseCost = totalRecipeBaseCost / yieldVal;
+            const unitPackaging = packagingTotal / yieldVal;
+            const unitInvisible = unitBaseCost * (invisibleRate / 100);
+            const unitTotalCostReal = unitBaseCost + unitPackaging + unitInvisible;
+
+            const finalSalePrice = unitTotalCostReal / (cmvTarget / 100);
+            const netProfitUnit = finalSalePrice - unitTotalCostReal;
+
+            lblTotalBaseCost.textContent = formatBRL(totalRecipeBaseCost);
+            resTotalCost.textContent = formatBRL(unitTotalCostReal);
+            resSalePrice.textContent = formatBRL(finalSalePrice);
+            resProfit.textContent = formatBRL(netProfitUnit);
+        }
+
+        function saveState() {
+            localStorage.setItem('cianela_db_ingredients', JSON.stringify(ingredients));
+        }
+
+        [inputYield, inputPackaging, inputInvisible, inputCmv].forEach(inp => {
+            inp.addEventListener('input', calculateMaster);
+        });
+
+        renderAll();
+    </script>
+</body>
+</html>
