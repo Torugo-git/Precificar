@@ -14,9 +14,9 @@
                         sans: ['Inter', 'sans-serif'],
                     },
                     colors: {
-                        primary: '#e11d48', // Rose 600 - Tom avermelhado padrão de apps de confeitaria
-                        primaryHover: '#be123c', // Rose 700
-                        bgApp: '#f9fafb', // Gray 50
+                        primary: '#e11d48',
+                        primaryHover: '#be123c',
+                        bgApp: '#f9fafb',
                         cardBg: '#ffffff',
                     }
                 }
@@ -53,7 +53,6 @@
             border-bottom: 2px solid #e11d48;
             font-weight: 600;
         }
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
@@ -62,11 +61,9 @@
 </head>
 <body class="min-h-screen font-sans flex flex-col">
 
-    <!-- HEADER ESTILO DOCEFY / LOVABLE -->
     <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <!-- Logo -->
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm">
                         <span class="text-white font-bold text-lg">C</span>
@@ -74,7 +71,6 @@
                     <span class="font-bold text-xl tracking-tight text-gray-900">Cianela<span class="text-primary">.</span></span>
                 </div>
 
-                <!-- Navigation Tabs -->
                 <nav class="hidden md:flex space-x-8 h-full">
                     <button onclick="switchTab('precificador')" id="btn-precificador" class="tab-btn active-tab inline-flex items-center px-1 pt-1 text-sm">
                         Precificação Inteligente
@@ -87,7 +83,6 @@
                     </button>
                 </nav>
 
-                <!-- User Profile / Right side -->
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-500 text-sm font-medium">
                         VC
@@ -96,7 +91,6 @@
             </div>
         </div>
         
-        <!-- Mobile Navigation (visible only on small screens) -->
         <div class="md:hidden flex border-t border-gray-100 bg-white overflow-x-auto no-scrollbar px-4">
             <button onclick="switchTab('precificador')" id="btn-precificador-mobile" class="tab-btn active-tab whitespace-nowrap px-3 py-3 text-sm">Precificação</button>
             <button onclick="switchTab('estoque')" id="btn-estoque-mobile" class="tab-btn whitespace-nowrap px-3 py-3 text-sm">Ingredientes</button>
@@ -104,25 +98,20 @@
         </div>
     </header>
 
-    <!-- MAIN CONTENT -->
     <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
 
-        <!-- ================= ABA 1: PRECIFICAÇÃO ================= -->
         <div id="tab-precificador" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            <!-- Coluna Esquerda: Construtor -->
             <div class="lg:col-span-8 space-y-6">
                 
-                <!-- Titulo da Receita -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="p-2 bg-rose-50 rounded-lg">
                             <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                         </div>
-                        <h2 id="product-title" class="text-xl font-semibold text-gray-900">Novo Item</h2>
+                        <h2 id="product-title" class="text-xl font-semibold text-gray-900">Nova Receita</h2>
                     </div>
 
-                    <!-- Inserir Ingrediente -->
                     <form id="form-recipe" class="flex flex-col sm:flex-row gap-4 items-end bg-gray-50 p-4 rounded-xl border border-gray-100 mb-6">
                         <div class="flex-1 w-full">
                             <label class="block text-xs font-medium text-gray-700 mb-1">Ingrediente</label>
@@ -139,15 +128,13 @@
                         </button>
                     </form>
 
-                    <!-- Lista de Ingredientes da Receita -->
                     <div>
                         <div class="flex justify-between text-xs font-medium text-gray-500 uppercase px-2 mb-2">
                             <span>Ingredientes na Receita</span>
                             <span>Custo</span>
                         </div>
                         <div id="recipe-items-container" class="space-y-2 max-h-[300px] overflow-y-auto pr-2 no-scrollbar">
-                            <!-- Gerado por JS -->
-                        </div>
+                            </div>
                         <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center px-2">
                             <span class="text-sm font-medium text-gray-600">Custo Total de Ingredientes</span>
                             <span id="lbl-total-base-cost" class="text-lg font-bold text-gray-900">R$ 0,00</span>
@@ -155,7 +142,6 @@
                     </div>
                 </div>
 
-                <!-- Variáveis de Custo -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                     <h3 class="text-base font-semibold text-gray-900 mb-5 border-b border-gray-100 pb-3">2. Custos Variáveis & Fixos</h3>
                     
@@ -183,7 +169,6 @@
                 </div>
             </div>
 
-            <!-- Coluna Direita: O Veredito (Card de Resumo) -->
             <div class="lg:col-span-4 sticky top-24">
                 <div class="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden">
                     <div class="bg-gray-50 p-5 border-b border-gray-200 text-center">
@@ -200,7 +185,6 @@
                             <span id="res-total-cost" class="font-bold text-gray-900">R$ 0,00</span>
                         </div>
                         
-                        <!-- Breakdown Progress Bar simulada -->
                         <div class="w-full bg-gray-100 rounded-full h-2 mb-1 overflow-hidden flex">
                             <div class="bg-primary h-2" style="width: 35%"></div>
                             <div class="bg-green-500 h-2" style="width: 65%"></div>
@@ -214,7 +198,7 @@
                         <div class="mt-6 pt-4 border-t border-gray-100">
                             <button class="w-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2.5 px-4 rounded-lg transition-colors text-sm flex justify-center items-center gap-2">
                                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
-                                Salvar Receita (PDF)
+                                Limpar Calculadora
                             </button>
                         </div>
                     </div>
@@ -222,7 +206,6 @@
             </div>
         </div>
 
-        <!-- ================= ABA 2: BIBLIOTECA DE INGREDIENTES ================= -->
         <div id="tab-estoque" class="hidden">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
                 <h2 class="text-lg font-semibold text-gray-900 mb-6">Cadastre seus ingredientes</h2>
@@ -248,7 +231,6 @@
                 </form>
             </div>
 
-            <!-- Tabela de Ingredientes -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
                     <h3 class="font-semibold text-gray-700">Seus Ingredientes</h3>
@@ -265,14 +247,12 @@
                             </tr>
                         </thead>
                         <tbody id="ingredients-grid-container" class="divide-y divide-gray-100">
-                            <!-- Gerado por JS -->
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- ================= ABA 3: RECEITAS FAVORITAS ================= -->
         <div id="tab-cardapio" class="hidden">
             <div class="mb-6">
                 <h2 class="text-2xl font-bold text-gray-900">Receitas Favoritas</h2>
@@ -281,7 +261,6 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
-                <!-- Cards de Receitas -->
                 <div onclick="loadProductPreset('Pastel de Leite Ninho', 35, 2.50, 4)" class="bg-white border border-gray-200 p-5 rounded-2xl cursor-pointer hover:border-primary hover:shadow-md transition-all group">
                     <div class="flex justify-between items-start mb-3">
                         <div class="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
@@ -331,9 +310,7 @@
 
     </main>
 
-    <!-- MOTOR JAVASCRIPT IDÊNTICO À VERSÃO ANTERIOR (FUNCIONALIDADE PRESERVADA) -->
     <script>
-        // Dados de Default garantidos
         const initialIngredients = [
             { id: "1", name: "Leite Moça Integral Lata", size: 395, price: 7.28, costPerGram: 7.28/395 },
             { id: "2", name: "Leite Ninho Integral Pó", size: 400, price: 17.50, costPerGram: 17.50/400 },
@@ -344,20 +321,11 @@
         ];
 
         let ingredients = JSON.parse(localStorage.getItem('cianela_db_ingredients')) || initialIngredients;
+        
+        // Inicialização totalmente limpa
         let recipe = [];
         let currentProductName = "Nova Receita";
 
-        if (recipe.length === 0 && ingredients.length > 0) {
-            recipe = [
-                { ingredient: ingredients.find(i => i.id === "1"), qtd: 395 },
-                { ingredient: ingredients.find(i => i.id === "4"), qtd: 115 },
-                { ingredient: ingredients.find(i => i.id === "2"), qtd: 200 },
-                { ingredient: ingredients.find(i => i.id === "3"), qtd: 140 }
-            ];
-            currentProductName = "Pastel de Leite Ninho";
-        }
-
-        // Elementos DOM
         const selectRecipeIngredient = document.getElementById('recipe-ingredient');
         const recipeItemsContainer = document.getElementById('recipe-items-container');
         const ingredientsGridContainer = document.getElementById('ingredients-grid-container');
@@ -376,7 +344,6 @@
 
         const formatBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-        // Navegação
         window.switchTab = function(tabName) {
             ['precificador', 'estoque', 'cardapio'].forEach(t => {
                 document.getElementById(`tab-${t}`).classList.add('hidden');
@@ -390,7 +357,6 @@
             if(activeMobile) activeMobile.classList.add('active-tab');
         };
 
-        // Insumos
         document.getElementById('form-ingredient').addEventListener('submit', function(e) {
             e.preventDefault();
             const name = document.getElementById('ing-name').value.trim();
@@ -416,7 +382,6 @@
             renderAll();
         };
 
-        // Receita
         document.getElementById('form-recipe').addEventListener('submit', function(e) {
             e.preventDefault();
             const ingId = selectRecipeIngredient.value;
@@ -440,7 +405,26 @@
             calculateMaster();
         };
 
-        // Presets
+        window.clearRecipe = function() {
+            recipe = [];
+            currentProductName = "Nova Receita";
+            inputYield.value = 1;
+            inputPackaging.value = "0.00";
+            inputInvisible.value = 10;
+            inputCmv.value = 35;
+            renderRecipeList();
+            calculateMaster();
+        };
+        
+        // Associa a função de limpar ao botão "Limpar Calculadora"
+        document.querySelector('button:contains("Limpar Calculadora")')?.addEventListener('click', clearRecipe);
+        const clearBtns = document.querySelectorAll('button');
+        clearBtns.forEach(btn => {
+            if(btn.textContent.includes('Limpar Calculadora')) {
+                btn.addEventListener('click', clearRecipe);
+            }
+        });
+
         window.loadProductPreset = function(name, cmv, packaging, yieldVal) {
             currentProductName = name;
             inputCmv.value = cmv;
@@ -466,7 +450,6 @@
             calculateMaster();
         };
 
-        // Renderização HTML
         function renderAll() {
             selectRecipeIngredient.innerHTML = '<option value="">Selecione na biblioteca...</option>';
             ingredients.forEach(i => {
@@ -519,7 +502,6 @@
             });
         }
 
-        // Matemática
         function calculateMaster() {
             const totalRecipeBaseCost = recipe.reduce((acc, item) => acc + (item.ingredient.costPerGram * item.qtd), 0);
             
