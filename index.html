@@ -55,6 +55,7 @@
                 <nav class="hidden md:flex space-x-8 h-full">
                     <button onclick="switchTab('precificador')" id="btn-precificador" class="tab-btn active-tab inline-flex items-center px-1 pt-1 text-sm">Precificação</button>
                     <button onclick="switchTab('estoque')" id="btn-estoque" class="tab-btn inline-flex items-center px-1 pt-1 text-sm">Biblioteca de Ingredientes</button>
+                    <button onclick="switchTab('embalagens')" id="btn-embalagens" class="tab-btn inline-flex items-center px-1 pt-1 text-sm">Embalagens</button>
                     <button onclick="switchTab('cardapio')" id="btn-cardapio" class="tab-btn inline-flex items-center px-1 pt-1 text-sm">Receitas Favoritas</button>
                 </nav>
                 <div class="flex items-center gap-3">
@@ -65,6 +66,7 @@
         <div class="md:hidden flex border-t border-gray-100 bg-white overflow-x-auto no-scrollbar px-4">
             <button onclick="switchTab('precificador')" id="btn-precificador-mobile" class="tab-btn active-tab whitespace-nowrap px-3 py-3 text-sm flex-1">Precificação</button>
             <button onclick="switchTab('estoque')" id="btn-estoque-mobile" class="tab-btn whitespace-nowrap px-3 py-3 text-sm flex-1">Ingredientes</button>
+            <button onclick="switchTab('embalagens')" id="btn-embalagens-mobile" class="tab-btn whitespace-nowrap px-3 py-3 text-sm flex-1">Embalagens</button>
             <button onclick="switchTab('cardapio')" id="btn-cardapio-mobile" class="tab-btn whitespace-nowrap px-3 py-3 text-sm flex-1">Receitas</button>
         </div>
     </header>
@@ -120,14 +122,31 @@
                 <div class="bg-white rounded-2xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 p-6 flex flex-col">
                     <div class="bg-amber-100 text-amber-800 font-bold px-4 py-2 rounded-lg inline-block mb-5 self-start">2. Custos Fixos</div>
                     <div class="space-y-4 flex-1">
-                        <div class="flex items-center justify-between">
-                            <label class="text-sm font-medium text-gray-700 flex items-center gap-2">📦 Embalagens</label>
-                            <div class="flex items-center bg-gray-50 rounded-lg border border-gray-200 px-3 py-1.5 w-32">
-                                <span class="text-gray-400 text-sm mr-1">R$</span>
-                                <input type="number" id="var-packaging" value="0.00" min="0" step="0.01" class="w-full bg-transparent border-none focus:outline-none text-right font-medium text-gray-700">
+                        
+                        <!-- NOVA SEÇÃO DE EMBALAGENS DINÂMICAS -->
+                        <div class="bg-white border border-gray-200 rounded-xl p-3 shadow-sm">
+                            <label class="text-sm font-bold text-gray-700 flex items-center gap-2 mb-3">📦 Embalagens da Receita</label>
+                            
+                            <form id="form-recipe-pack" class="flex gap-2 mb-3">
+                                <select id="recipe-packaging-select" required class="flex-1 input-clean rounded-lg p-2 text-xs cursor-pointer">
+                                    <option value="">Selecione embalagem...</option>
+                                </select>
+                                <input type="number" id="recipe-pack-qtd" required min="1" step="1" class="w-16 input-clean rounded-lg p-2 text-xs text-center" placeholder="Qtd">
+                                <button type="submit" class="bg-gray-100 text-gray-700 hover:bg-gray-200 px-3 py-2 rounded-lg text-xs font-bold transition-colors">+</button>
+                            </form>
+                            
+                            <div id="recipe-packs-container" class="space-y-1 max-h-[100px] overflow-y-auto pr-1 no-scrollbar text-xs"></div>
+                            
+                            <!-- Mantido oculto apenas para compatibilidade com receitas antigas -->
+                            <input type="hidden" id="var-packaging" value="0.00">
+
+                            <div class="flex justify-between items-center border-t border-gray-100 pt-2 mt-2">
+                                <span class="text-xs font-semibold text-gray-500">Custo Embalagens:</span>
+                                <span id="lbl-total-packaging" class="text-sm font-bold text-gray-700">R$ 0,00</span>
                             </div>
                         </div>
-                        <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
+
+                        <div class="bg-amber-50 p-4 rounded-xl border border-amber-100 mt-4">
                             <div class="flex justify-between items-start mb-2">
                                 <label class="text-sm font-bold text-amber-800 flex items-center gap-1.5">⚡ Taxa de Variáveis</label>
                                 <div class="flex items-center bg-white rounded border border-amber-200 px-2 py-1 w-20 shadow-sm">
@@ -172,7 +191,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
                 <div class="bg-primary rounded-2xl p-5 text-white shadow-lg flex flex-col items-center justify-center text-center relative overflow-hidden">
                     <div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
-                    <span class="text-xs font-semibold uppercase tracking-wider mb-2 opacity-90">Custo Total (Massa)</span>
+                    <span class="text-xs font-semibold uppercase tracking-wider mb-2 opacity-90">Custo Total (Massa+Emb)</span>
                     <div id="res-total-cost" class="text-4xl font-extrabold tracking-tight mb-1">R$ 0,00</div>
                     <span id="res-unit-cost" class="text-xs opacity-80 mt-1 bg-black/10 px-2 py-0.5 rounded">R$ 0,00 por unidade</span>
                 </div>
@@ -219,6 +238,7 @@
             </div>
         </div>
 
+        <!-- ABA DE INGREDIENTES -->
         <div id="tab-estoque" class="hidden">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
                 <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
@@ -264,6 +284,52 @@
             </div>
         </div>
 
+        <!-- ABA DE EMBALAGENS (NOVA) -->
+        <div id="tab-embalagens" class="hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
+                <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    Cadastre suas Embalagens
+                </h2>
+                <form id="form-packaging-lib" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                    <div class="md:col-span-5">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 ml-1">Nome da Embalagem</label>
+                        <input type="text" id="pack-lib-name" required class="w-full input-clean rounded-lg p-3 text-sm font-medium" placeholder="Ex: Saco Kraft P, Adesivo Logo">
+                    </div>
+                    <div class="md:col-span-3">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 ml-1">Qtd no Pacote</label>
+                        <input type="number" id="pack-lib-size" required min="1" step="1" class="w-full input-clean rounded-lg p-3 text-sm font-medium text-center" placeholder="50">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 ml-1">Pago (R$)</label>
+                        <input type="number" id="pack-lib-price" required min="0.01" step="0.01" class="w-full input-clean rounded-lg p-3 text-sm font-medium text-center" placeholder="15.00">
+                    </div>
+                    <div class="md:col-span-2">
+                        <button type="submit" class="w-full bg-white border-2 border-primary text-primary hover:bg-rose-50 font-bold py-2.5 px-4 rounded-lg transition-colors text-sm">+ Adicionar</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                    <h3 class="font-bold text-gray-700">Suas Embalagens Salvas</h3>
+                    <span id="kpi-total-packagings" class="bg-white border border-gray-200 text-gray-600 text-xs font-bold px-3 py-1 rounded-full shadow-sm">0</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs text-gray-400 bg-gray-50 uppercase tracking-wider border-b border-gray-100">
+                            <tr>
+                                <th class="px-6 py-4 font-bold">Embalagem</th>
+                                <th class="px-6 py-4 font-bold text-center">Pacote com</th>
+                                <th class="px-6 py-4 font-bold text-center">Custo por Unidade</th>
+                                <th class="px-6 py-4 text-center font-bold">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="packagings-grid-container" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <div id="tab-cardapio" class="hidden">
             <div class="mb-8 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
                 <div>
@@ -283,25 +349,39 @@
             { id: "3", name: "Nutella Balde", size: 3000, price: 200.00, costPerGram: 200/3000 }
         ];
 
+        const initialPackagings = [
+            { id: "p1", name: "Saco Kraft P", size: 50, price: 15.00, costPerUnit: 15.00/50 },
+            { id: "p2", name: "Adesivo Logo", size: 100, price: 20.00, costPerUnit: 20.00/100 }
+        ];
+
         let ingredients = JSON.parse(localStorage.getItem('cianela_db_ingredients')) || initialIngredients;
+        let packagings = JSON.parse(localStorage.getItem('cianela_db_packagings_lib')) || initialPackagings;
+        
         let recipe = JSON.parse(localStorage.getItem('cianela_db_current_recipe')) || [];
+        let recipePacks = JSON.parse(localStorage.getItem('cianela_db_current_recipe_packs')) || [];
         let favoriteRecipes = JSON.parse(localStorage.getItem('cianela_db_favorites')) || [];
 
         const selectRecipeIngredient = document.getElementById('recipe-ingredient');
+        const selectRecipePackaging = document.getElementById('recipe-packaging-select');
+        
         const recipeItemsContainer = document.getElementById('recipe-items-container');
+        const recipePacksContainer = document.getElementById('recipe-packs-container');
+        
         const ingredientsGridContainer = document.getElementById('ingredients-grid-container');
+        const packagingsGridContainer = document.getElementById('packagings-grid-container');
         const favoritesGridContainer = document.getElementById('favorites-grid-container');
         
         const inputRecipeName = document.getElementById('recipe-name');
         const inputYield = document.getElementById('var-yield');
         const inputTime = document.getElementById('var-time');
-        const inputPackaging = document.getElementById('var-packaging');
+        const inputPackaging = document.getElementById('var-packaging'); // Mantido oculto
         const inputInvisible = document.getElementById('var-invisible');
         const inputLaborRate = document.getElementById('labor-rate');
         const inputLaborTime = document.getElementById('labor-time');
         const inputCmv = document.getElementById('var-cmv');
 
         const lblSubtotalIng = document.getElementById('lbl-subtotal-ingredients');
+        const lblTotalPackaging = document.getElementById('lbl-total-packaging');
         const lblVarCost = document.getElementById('lbl-variables-cost');
         const lblLaborCost = document.getElementById('lbl-labor-cost');
         
@@ -311,7 +391,9 @@
         const resTotalRevenue = document.getElementById('res-total-revenue');
         const resTotalProfit = document.getElementById('res-total-profit');
         const resUnitProfit = document.getElementById('res-unit-profit');
+        
         const kpiTotalIngredients = document.getElementById('kpi-total-ingredients');
+        const kpiTotalPackagings = document.getElementById('kpi-total-packagings');
 
         const formatBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
@@ -325,7 +407,7 @@
         inputCmv.value = localStorage.getItem('cianela_db_cmv') || 35;
 
         window.switchTab = function(tabName) {
-            ['precificador', 'estoque', 'cardapio'].forEach(t => {
+            ['precificador', 'estoque', 'embalagens', 'cardapio'].forEach(t => {
                 document.getElementById(`tab-${t}`).classList.add('hidden');
                 document.getElementById(`btn-${t}`).classList.remove('active-tab');
                 const btnMobile = document.getElementById(`btn-${t}-mobile`);
@@ -337,6 +419,7 @@
             if(activeMobile) activeMobile.classList.add('active-tab');
         };
 
+        // GESTÃO DE INGREDIENTES
         document.getElementById('form-ingredient').addEventListener('submit', function(e) {
             e.preventDefault();
             const name = document.getElementById('ing-name').value.trim();
@@ -352,6 +435,23 @@
             saveState(); renderAll();
         };
 
+        // GESTÃO DE EMBALAGENS (BIBLIOTECA)
+        document.getElementById('form-packaging-lib').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('pack-lib-name').value.trim();
+            const size = parseInt(document.getElementById('pack-lib-size').value);
+            const price = parseFloat(document.getElementById('pack-lib-price').value);
+            packagings.push({ id: Date.now().toString(), name, size, price, costPerUnit: price / size });
+            saveState(); renderAll(); this.reset(); document.getElementById('pack-lib-name').focus();
+        });
+
+        window.deletePackaging = function(id) {
+            packagings = packagings.filter(p => p.id !== id);
+            recipePacks = recipePacks.filter(item => item.pack.id !== id);
+            saveState(); renderAll();
+        };
+
+        // GESTÃO DA RECEITA (INGREDIENTES)
         document.getElementById('form-recipe').addEventListener('submit', function(e) {
             e.preventDefault();
             const ingId = selectRecipeIngredient.value;
@@ -365,23 +465,47 @@
 
         window.removeRecipeItem = function(index) { recipe.splice(index, 1); saveState(); renderRecipeList(); calculateMaster(); };
 
+        // GESTÃO DA RECEITA (EMBALAGENS)
+        document.getElementById('form-recipe-pack').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const packId = selectRecipePackaging.value;
+            const qtd = parseInt(document.getElementById('recipe-pack-qtd').value);
+            if(!packId) return;
+            const targetPack = packagings.find(p => p.id === packId);
+            const existing = recipePacks.find(item => item.pack.id === packId);
+            if(existing) existing.qtd += qtd; else recipePacks.push({ pack: targetPack, qtd });
+            saveState(); renderRecipePacksList(); calculateMaster(); document.getElementById('recipe-pack-qtd').value = '';
+        });
+
+        window.removeRecipePack = function(index) { recipePacks.splice(index, 1); saveState(); renderRecipePacksList(); calculateMaster(); };
+
+        // LIMPAR
         window.clearRecipe = function() {
-            recipe = []; inputRecipeName.value = "Nova Receita"; inputYield.value = 1; inputTime.value = "1h";
+            recipe = []; recipePacks = [];
+            inputRecipeName.value = "Nova Receita"; inputYield.value = 1; inputTime.value = "1h";
             inputPackaging.value = "0.00"; inputInvisible.value = 15; inputLaborTime.value = 1; inputCmv.value = 35;
-            saveState(); renderRecipeList(); calculateMaster();
+            saveState(); renderRecipeList(); renderRecipePacksList(); calculateMaster();
         };
         
         document.getElementById('btn-clear-calculator').addEventListener('click', window.clearRecipe);
 
+        // FAVORITOS
         window.saveCurrentToFavorites = function() {
             if(recipe.length === 0) return alert("Sua receita está vazia!");
             const recipeName = inputRecipeName.value.trim();
             if(recipeName === "" || recipeName === "Nova Receita") return alert("Dê um nome para a receita no topo.");
             const newFavorite = {
-                id: Date.now().toString(), name: recipeName, recipeData: JSON.parse(JSON.stringify(recipe)), 
-                yieldVal: parseFloat(inputYield.value), timeVal: inputTime.value, packaging: parseFloat(inputPackaging.value),
-                invisibleRate: parseFloat(inputInvisible.value), laborRate: parseFloat(inputLaborRate.value),
-                laborTime: parseFloat(inputLaborTime.value), cmv: parseFloat(inputCmv.value)
+                id: Date.now().toString(), 
+                name: recipeName, 
+                recipeData: JSON.parse(JSON.stringify(recipe)), 
+                recipePacksData: JSON.parse(JSON.stringify(recipePacks)), // Salva as embalagens da receita
+                yieldVal: parseFloat(inputYield.value), 
+                timeVal: inputTime.value, 
+                packaging: parseFloat(inputPackaging.value),
+                invisibleRate: parseFloat(inputInvisible.value), 
+                laborRate: parseFloat(inputLaborRate.value),
+                laborTime: parseFloat(inputLaborTime.value), 
+                cmv: parseFloat(inputCmv.value)
             };
             const existingIndex = favoriteRecipes.findIndex(f => f.name.toLowerCase() === recipeName.toLowerCase());
             if(existingIndex >= 0) { if(confirm("Substituir receita existente?")) favoriteRecipes[existingIndex] = newFavorite; else return; } 
@@ -391,22 +515,37 @@
 
         window.loadFavorite = function(id) {
             const fav = favoriteRecipes.find(f => f.id === id); if(!fav) return;
-            inputRecipeName.value = fav.name; recipe = JSON.parse(JSON.stringify(fav.recipeData));
-            inputYield.value = fav.yieldVal; inputTime.value = fav.timeVal || "1h"; inputPackaging.value = fav.packaging;
-            inputInvisible.value = fav.invisibleRate; inputLaborRate.value = fav.laborRate || 15; inputLaborTime.value = fav.laborTime || 1;
+            inputRecipeName.value = fav.name; 
+            recipe = JSON.parse(JSON.stringify(fav.recipeData));
+            recipePacks = fav.recipePacksData ? JSON.parse(JSON.stringify(fav.recipePacksData)) : []; // Puxa os dados ou inicia vazio
+            
+            inputYield.value = fav.yieldVal; 
+            inputTime.value = fav.timeVal || "1h"; 
+            inputPackaging.value = fav.packaging || "0.00"; // Puxa embalagem legada caso exista
+            inputInvisible.value = fav.invisibleRate; 
+            inputLaborRate.value = fav.laborRate || 15; 
+            inputLaborTime.value = fav.laborTime || 1;
             inputCmv.value = fav.cmv || 35;
-            saveState(); switchTab('precificador'); renderRecipeList(); calculateMaster();
+            
+            saveState(); switchTab('precificador'); renderRecipeList(); renderRecipePacksList(); calculateMaster();
         };
 
         window.deleteFavorite = function(id) {
             if(confirm("Excluir favorito?")) { favoriteRecipes = favoriteRecipes.filter(f => f.id !== id); saveState(); renderFavorites(); }
         };
 
+        // RENDERIZAÇÕES GERAIS
         function renderAll() {
+            // Dropdowns
             selectRecipeIngredient.innerHTML = '<option value="">Selecione na biblioteca...</option>';
+            ingredients.forEach(i => selectRecipeIngredient.innerHTML += `<option value="${i.id}">${i.name}</option>`);
+            
+            selectRecipePackaging.innerHTML = '<option value="">Selecione embalagem...</option>';
+            packagings.forEach(p => selectRecipePackaging.innerHTML += `<option value="${p.id}">${p.name}</option>`);
+
+            // Tabelas de Insumos
             ingredientsGridContainer.innerHTML = '';
             ingredients.forEach(i => {
-                selectRecipeIngredient.innerHTML += `<option value="${i.id}">${i.name}</option>`;
                 ingredientsGridContainer.innerHTML += `
                     <tr class="hover:bg-gray-50 border-b border-gray-50">
                         <td class="px-6 py-3 font-medium text-gray-900">${i.name}</td>
@@ -416,7 +555,20 @@
                     </tr>`;
             });
             kpiTotalIngredients.textContent = ingredients.length;
-            renderRecipeList(); renderFavorites(); calculateMaster();
+
+            packagingsGridContainer.innerHTML = '';
+            packagings.forEach(p => {
+                packagingsGridContainer.innerHTML += `
+                    <tr class="hover:bg-gray-50 border-b border-gray-50">
+                        <td class="px-6 py-3 font-medium text-gray-900">${p.name}</td>
+                        <td class="px-6 py-3 text-gray-500 text-center">${p.size} un. <br><span class="text-[10px] bg-gray-100 px-1 rounded ml-1">R$ ${p.price}</span></td>
+                        <td class="px-6 py-3 text-center font-mono text-primary font-semibold">${formatBRL(p.costPerUnit)}</td>
+                        <td class="px-6 py-3 text-center"><button onclick="deletePackaging('${p.id}')" class="text-gray-400 hover:text-red-600 bg-white border border-gray-200 p-1.5 rounded">Excluir</button></td>
+                    </tr>`;
+            });
+            kpiTotalPackagings.textContent = packagings.length;
+
+            renderRecipeList(); renderRecipePacksList(); renderFavorites(); calculateMaster();
         }
 
         function renderRecipeList() {
@@ -429,6 +581,22 @@
                         <div class="w-1/6 text-center text-xs text-gray-500 font-mono">${item.qtd}g</div>
                         <div class="w-1/6 text-center text-[10px] text-gray-400 font-mono">R$ ${(item.ingredient.costPerGram || 0).toFixed(3)}</div>
                         <div class="w-1/6 text-right flex items-center justify-end gap-2"><span class="text-xs font-bold text-gray-800">${formatBRL(subTotal)}</span><button onclick="removeRecipeItem(${index})" class="text-gray-300 hover:text-red-500">X</button></div>
+                    </div>`;
+            });
+        }
+
+        function renderRecipePacksList() {
+            recipePacksContainer.innerHTML = recipePacks.length === 0 ? '<div class="text-[10px] text-gray-400 py-1">Nenhuma embalagem.</div>' : '';
+            recipePacks.forEach((item, index) => {
+                const subTotal = (item.pack.costPerUnit || 0) * item.qtd;
+                recipePacksContainer.innerHTML += `
+                    <div class="flex items-center justify-between py-1 border-b border-gray-50 last:border-0">
+                        <span class="text-gray-700 truncate pr-2 w-1/2">${item.pack.name}</span>
+                        <span class="text-gray-500 w-1/6 text-center">${item.qtd} un</span>
+                        <div class="flex items-center justify-end gap-2 w-1/3">
+                            <span class="font-bold text-gray-800">${formatBRL(subTotal)}</span>
+                            <button onclick="removeRecipePack(${index})" class="text-gray-300 hover:text-red-500">X</button>
+                        </div>
                     </div>`;
             });
         }
@@ -446,11 +614,16 @@
             });
         }
 
-        // CÁLCULO VIA CMV ALVO
+        // CÁLCULO MESTRE
         function calculateMaster() {
             const recipeBaseCost = recipe.reduce((acc, item) => acc + ((item.ingredient.costPerGram || 0) * item.qtd), 0);
+            
+            // Soma as embalagens dinâmicas cadastradas + o antigo input caso a pessoa carregue uma receita legada
+            const dynamicPackagingCost = recipePacks.reduce((acc, item) => acc + ((item.pack.costPerUnit || 0) * item.qtd), 0);
+            const legacyPackagingCost = parseFloat(inputPackaging.value) || 0;
+            const packagingTotal = dynamicPackagingCost + legacyPackagingCost;
+            
             const yieldVal = parseFloat(inputYield.value) || 1; 
-            const packagingTotal = parseFloat(inputPackaging.value) || 0;
             const invisibleRate = parseFloat(inputInvisible.value) || 0; 
             const laborRate = parseFloat(inputLaborRate.value) || 0;
             const laborTime = parseFloat(inputLaborTime.value) || 0; 
@@ -465,8 +638,10 @@
             const totalProfit = totalSalePrice - totalCostReceita;
 
             lblSubtotalIng.textContent = formatBRL(recipeBaseCost); 
+            lblTotalPackaging.textContent = formatBRL(packagingTotal);
             lblVarCost.textContent = formatBRL(variablesCost); 
             lblLaborCost.textContent = formatBRL(laborCostTotal);
+            
             resTotalCost.textContent = formatBRL(totalCostReceita); 
             resUnitCost.textContent = `${formatBRL(totalCostReceita / yieldVal)} por unidade`;
             resUnitSalePrice.textContent = formatBRL(totalSalePrice / yieldVal); 
@@ -477,8 +652,11 @@
 
         function saveState() {
             localStorage.setItem('cianela_db_ingredients', JSON.stringify(ingredients));
+            localStorage.setItem('cianela_db_packagings_lib', JSON.stringify(packagings));
             localStorage.setItem('cianela_db_current_recipe', JSON.stringify(recipe));
+            localStorage.setItem('cianela_db_current_recipe_packs', JSON.stringify(recipePacks));
             localStorage.setItem('cianela_db_favorites', JSON.stringify(favoriteRecipes));
+            
             localStorage.setItem('cianela_db_current_name', inputRecipeName.value);
             localStorage.setItem('cianela_db_yield', inputYield.value); 
             localStorage.setItem('cianela_db_time', inputTime.value);
@@ -490,7 +668,7 @@
         }
 
         [inputRecipeName, inputYield, inputTime, inputPackaging, inputInvisible, inputLaborRate, inputLaborTime, inputCmv].forEach(inp => {
-            inp.addEventListener('input', () => { calculateMaster(); saveState(); });
+            if(inp) inp.addEventListener('input', () => { calculateMaster(); saveState(); });
         });
 
         renderAll();
