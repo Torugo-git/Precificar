@@ -79,10 +79,15 @@
                 <div class="col-span-1 md:col-span-1">
                     <input type="text" id="recipe-name" value="Nova Receita" class="w-full text-center font-bold text-white bg-primary hover:bg-primaryHover transition-colors border-none rounded-full py-3 px-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-300" placeholder="Nome da Receita">
                 </div>
-                <div class="col-span-1 md:col-span-1 flex items-center bg-gray-100 rounded-full px-4">
+                <div class="col-span-1 md:col-span-1 flex items-center bg-gray-100 rounded-full px-4 py-1">
                     <span class="text-sm font-medium text-gray-500 mr-2">Rendimento:</span>
-                    <input type="number" id="var-yield" value="1" min="1" class="flex-1 bg-transparent border-none focus:outline-none text-center font-bold text-gray-700 w-full">
-                    <span class="text-sm text-gray-500 ml-2">unid.</span>
+                    <input type="number" id="var-yield" value="1" min="1" step="any" class="flex-1 bg-transparent border-none focus:outline-none text-center font-bold text-gray-700 w-full">
+                    <select id="var-yield-unit" class="bg-transparent border-none focus:outline-none text-sm font-bold text-gray-500 cursor-pointer ml-1 hover:text-gray-700">
+                        <option value="unid.">unid.</option>
+                        <option value="ml">ml</option>
+                        <option value="g">g</option>
+                        <option value="fatias">fatias</option>
+                    </select>
                 </div>
                 <div class="col-span-1 md:col-span-1 flex items-center bg-gray-100 rounded-full px-4">
                     <span class="text-sm font-medium text-gray-500 mr-2">Preparo:</span>
@@ -90,40 +95,103 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 p-6">
-                <div class="bg-primary text-white font-bold px-4 py-2 rounded-lg inline-block mb-5">1. Custos dos Ingredientes</div>
-                <form id="form-recipe" class="flex flex-col sm:flex-row gap-3 items-end bg-gray-50 p-3 rounded-xl border border-gray-100 mb-5">
-                    <div class="flex-1 w-full">
-                        <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1 ml-1">Ingrediente</label>
-                        <select id="recipe-ingredient" required class="w-full input-clean rounded-lg p-2.5 text-sm cursor-pointer">
-                            <option value="">Selecione na biblioteca...</option>
-                        </select>
-                    </div>
-                    <div class="w-full sm:w-28">
-                        <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1 ml-1">Qtd (g/ml)</label>
-                        <input type="number" id="recipe-qtd" required min="0.1" step="any" class="w-full input-clean rounded-lg p-2.5 text-sm" placeholder="Ex: 100">
-                    </div>
-                    <button type="submit" class="w-full sm:w-auto text-primary font-bold py-2.5 px-4 rounded-lg hover:bg-rose-50 transition-colors text-sm border border-primary/20">+ Adicionar</button>
-                </form>
+            <!-- GRID PARA MÓDULO 1 E 2 LADO A LADO -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- MÓDULO 1: MASSA / BASE -->
+                <div class="bg-white rounded-2xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 p-6 flex flex-col">
+                    <div class="bg-primary text-white font-bold px-4 py-2 rounded-lg inline-block mb-5 self-start">1. Custos da Massa</div>
+                    <form id="form-recipe" class="flex flex-col gap-3 items-end bg-gray-50 p-3 rounded-xl border border-gray-100 mb-5">
+                        <div class="w-full">
+                            <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1 ml-1">Ingrediente</label>
+                            <select id="recipe-ingredient" required class="w-full input-clean rounded-lg p-2 text-sm cursor-pointer">
+                                <option value="">Selecione na biblioteca...</option>
+                            </select>
+                        </div>
+                        <div class="flex gap-2 w-full">
+                            <div class="flex-1">
+                                <label class="block text-[10px] uppercase font-bold text-gray-500 mb-1 ml-1">Qtd (g/ml)</label>
+                                <input type="number" id="recipe-qtd" required min="0.1" step="any" class="w-full input-clean rounded-lg p-2 text-sm" placeholder="Ex: 100">
+                            </div>
+                            <button type="submit" class="bg-primary text-white font-bold px-4 rounded-lg hover:bg-primaryHover transition-colors text-sm self-end h-[38px]">+</button>
+                        </div>
+                    </form>
 
-                <div>
-                    <div class="flex justify-between items-center text-xs font-bold text-gray-400 uppercase px-3 pb-2 border-b border-gray-100">
-                        <div class="w-1/2">Ingrediente</div><div class="w-1/6 text-center">Qtd</div><div class="w-1/6 text-center">C. Unit.</div><div class="w-1/6 text-right">Total</div>
-                    </div>
-                    <div id="recipe-items-container" class="space-y-1 mt-2 max-h-[300px] overflow-y-auto pr-1 no-scrollbar"></div>
-                    <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center px-2">
-                        <span class="text-sm font-bold text-gray-700">Custo Subtotal</span>
-                        <span id="lbl-subtotal-ingredients" class="text-lg font-extrabold text-primary">R$ 0,00</span>
+                    <div class="flex-1 flex flex-col">
+                        <div class="flex justify-between items-center text-[10px] font-bold text-gray-400 uppercase px-2 pb-2 border-b border-gray-100">
+                            <div class="w-1/2">Ingrediente</div><div class="w-1/4 text-center">Qtd</div><div class="w-1/4 text-right">Total</div>
+                        </div>
+                        <div id="recipe-items-container" class="space-y-1 mt-2 flex-1 max-h-[250px] overflow-y-auto pr-1 no-scrollbar"></div>
+                        <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center px-1">
+                            <span class="text-sm font-bold text-gray-700">Subtotal Massa</span>
+                            <span id="lbl-subtotal-ingredients" class="text-lg font-extrabold text-primary">R$ 0,00</span>
+                        </div>
                     </div>
                 </div>
+
+                <!-- NOVO MÓDULO 2: CALDA (COM BIBLIOTECA E FRACIONAMENTO) -->
+                <div class="bg-white rounded-2xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 p-6 flex flex-col">
+                    <div class="bg-purple-500 text-white font-bold px-4 py-2 rounded-lg inline-block mb-5 self-start">2. Custos da Calda</div>
+                    <form id="form-syrup" class="flex flex-col gap-3 items-end bg-purple-50 p-3 rounded-xl border border-purple-100 mb-5">
+                        <div class="w-full">
+                            <label class="block text-[10px] uppercase font-bold text-purple-600 mb-1 ml-1">Ingrediente da Calda</label>
+                            <select id="syrup-ingredient" required class="w-full input-clean rounded-lg p-2 text-sm cursor-pointer border-purple-200">
+                                <option value="">Selecione na biblioteca...</option>
+                            </select>
+                        </div>
+                        <div class="flex gap-2 w-full">
+                            <div class="flex-1">
+                                <label class="block text-[10px] uppercase font-bold text-purple-600 mb-1 ml-1">Qtd (g/ml)</label>
+                                <input type="number" id="syrup-qtd" required min="0.1" step="any" class="w-full input-clean rounded-lg p-2 text-sm border-purple-200" placeholder="Ex: 50">
+                            </div>
+                            <button type="submit" class="bg-purple-500 text-white font-bold px-4 rounded-lg hover:bg-purple-600 transition-colors text-sm self-end h-[38px]">+</button>
+                        </div>
+                    </form>
+
+                    <div class="flex-1 flex flex-col">
+                        <div class="flex justify-between items-center text-[10px] font-bold text-purple-300 uppercase px-2 pb-2 border-b border-gray-100">
+                            <div class="w-1/2">Ingrediente</div><div class="w-1/4 text-center">Qtd</div><div class="w-1/4 text-right">Total</div>
+                        </div>
+                        <div id="syrup-items-container" class="space-y-1 mt-2 flex-1 max-h-[150px] overflow-y-auto pr-1 no-scrollbar"></div>
+                        
+                        <!-- CONTROLES DE FRACIONAMENTO DA CALDA -->
+                        <div class="mt-4 pt-4 border-t border-purple-100">
+                            <div class="flex justify-between items-center px-1 mb-3">
+                                <span class="text-xs font-bold text-gray-500">Custo da Panela Inteira</span>
+                                <span id="lbl-subtotal-syrup" class="text-sm font-bold text-gray-400">R$ 0,00</span>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-2 mb-3">
+                                <div class="bg-purple-50 rounded-lg p-2 border border-purple-100 flex flex-col">
+                                    <label class="block text-[10px] font-bold text-purple-700 uppercase mb-1 text-center">Rendimento Total (ml)</label>
+                                    <input type="number" id="syrup-batch-yield" value="1" min="0.1" step="any" class="w-full bg-white border border-purple-200 rounded p-1.5 text-xs text-center font-bold text-purple-900 focus:outline-none focus:border-purple-400" title="Quanto rendeu a panela inteira?">
+                                </div>
+                                <div class="bg-purple-50 rounded-lg p-2 border border-purple-100 flex flex-col">
+                                    <label class="block text-[10px] font-bold text-purple-700 uppercase mb-1 text-center">Usado nesta receita (ml)</label>
+                                    <input type="number" id="syrup-used-volume" value="1" min="0" step="any" class="w-full bg-white border border-purple-200 rounded p-1.5 text-xs text-center font-bold text-purple-900 focus:outline-none focus:border-purple-400" title="Quantos ml você vai gastar agora?">
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between items-center text-[11px] text-purple-500 px-2 mb-1.5">
+                                <span>Custo por ml: <strong id="lbl-syrup-cost-per-ml">R$ 0,00</strong></span>
+                            </div>
+                            <div class="flex justify-between items-center px-3 py-2 bg-purple-500 rounded-xl shadow-sm">
+                                <span class="text-sm font-bold text-white">Adicionado na Receita</span>
+                                <span id="lbl-syrup-final-cost" class="text-lg font-extrabold text-white">R$ 0,00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- GRID PARA MÓDULO 3 E 4 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- MÓDULO 3: CUSTOS FIXOS E EMBALAGENS -->
                 <div class="bg-white rounded-2xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 p-6 flex flex-col">
-                    <div class="bg-amber-100 text-amber-800 font-bold px-4 py-2 rounded-lg inline-block mb-5 self-start">2. Custos Fixos</div>
+                    <div class="bg-amber-100 text-amber-800 font-bold px-4 py-2 rounded-lg inline-block mb-5 self-start">3. Fixos & Embalagens</div>
                     <div class="space-y-4 flex-1">
                         
-                        <!-- NOVA SEÇÃO DE EMBALAGENS DINÂMICAS -->
                         <div class="bg-white border border-gray-200 rounded-xl p-3 shadow-sm">
                             <label class="text-sm font-bold text-gray-700 flex items-center gap-2 mb-3">📦 Embalagens da Receita</label>
                             
@@ -137,34 +205,32 @@
                             
                             <div id="recipe-packs-container" class="space-y-1 max-h-[100px] overflow-y-auto pr-1 no-scrollbar text-xs"></div>
                             
-                            <!-- Mantido oculto apenas para compatibilidade com receitas antigas -->
                             <input type="hidden" id="var-packaging" value="0.00">
 
                             <div class="flex justify-between items-center border-t border-gray-100 pt-2 mt-2">
-                                <span class="text-xs font-semibold text-gray-500">Custo Embalagens:</span>
+                                <span class="text-xs font-semibold text-gray-500">Total Embalagens:</span>
                                 <span id="lbl-total-packaging" class="text-sm font-bold text-gray-700">R$ 0,00</span>
                             </div>
                         </div>
 
                         <div class="bg-amber-50 p-4 rounded-xl border border-amber-100 mt-4">
-                            <div class="flex justify-between items-start mb-2">
+                            <div class="flex justify-between items-center mb-2">
                                 <label class="text-sm font-bold text-amber-800 flex items-center gap-1.5">⚡ Taxa de Variáveis</label>
                                 <div class="flex items-center bg-white rounded border border-amber-200 px-2 py-1 w-20 shadow-sm">
                                     <input type="number" id="var-invisible" value="15" min="0" max="100" class="w-full bg-transparent border-none focus:outline-none text-center font-bold text-amber-900">
                                     <span class="text-amber-700 text-xs ml-1">%</span>
                                 </div>
                             </div>
-                            <p class="text-[10px] text-amber-700/70 mb-3 leading-tight">Inclui desperdício, gás, luz, água e outras despesas.</p>
-                            <div class="flex justify-between items-center border-t border-amber-200/50 pt-2">
-                                <span class="text-xs text-amber-800 font-medium">Valor calculado:</span>
+                            <div class="flex justify-between items-center border-t border-amber-200/50 pt-2 mt-2">
                                 <span id="lbl-variables-cost" class="text-sm font-bold text-amber-600">R$ 0,00</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- MÓDULO 4: MÃO DE OBRA -->
                 <div class="bg-white rounded-2xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-gray-100 p-6 flex flex-col">
-                    <div class="bg-blueLight text-white font-bold px-4 py-2 rounded-lg inline-block mb-5 self-start">3. Mão de Obra</div>
+                    <div class="bg-blueLight text-white font-bold px-4 py-2 rounded-lg inline-block mb-5 self-start">4. Mão de Obra</div>
                     <div class="space-y-4 flex-1 flex flex-col justify-center">
                         <div class="flex items-center justify-between">
                             <label class="text-sm font-medium text-gray-700">Valor da sua Hora</label>
@@ -188,10 +254,11 @@
                 </div>
             </div>
 
+            <!-- RESULTADOS -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
                 <div class="bg-primary rounded-2xl p-5 text-white shadow-lg flex flex-col items-center justify-center text-center relative overflow-hidden">
                     <div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
-                    <span class="text-xs font-semibold uppercase tracking-wider mb-2 opacity-90">Custo Total (Massa+Emb)</span>
+                    <span class="text-xs font-semibold uppercase tracking-wider mb-2 opacity-90">Custo Total da Receita</span>
                     <div id="res-total-cost" class="text-4xl font-extrabold tracking-tight mb-1">R$ 0,00</div>
                     <span id="res-unit-cost" class="text-xs opacity-80 mt-1 bg-black/10 px-2 py-0.5 rounded">R$ 0,00 por unidade</span>
                 </div>
@@ -238,11 +305,11 @@
             </div>
         </div>
 
-        <!-- ABA DE INGREDIENTES -->
+        <!-- ABA DE INGREDIENTES (Estoque Central) -->
         <div id="tab-estoque" class="hidden">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
                 <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                    Cadastre seus ingredientes
+                    Cadastre seus ingredientes (Massa e Calda)
                 </h2>
                 <form id="form-ingredient" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                     <div class="md:col-span-5">
@@ -284,7 +351,7 @@
             </div>
         </div>
 
-        <!-- ABA DE EMBALAGENS (NOVA) -->
+        <!-- ABA DE EMBALAGENS -->
         <div id="tab-embalagens" class="hidden">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
                 <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
@@ -330,6 +397,7 @@
             </div>
         </div>
 
+        <!-- ABA DE CARDÁPIO -->
         <div id="tab-cardapio" class="hidden">
             <div class="mb-8 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
                 <div>
@@ -346,7 +414,8 @@
         const initialIngredients = [
             { id: "1", name: "Leite Moça Integral Lata", size: 395, price: 7.28, costPerGram: 7.28/395 },
             { id: "2", name: "Leite Ninho Integral Pó", size: 400, price: 17.50, costPerGram: 17.50/400 },
-            { id: "3", name: "Nutella Balde", size: 3000, price: 200.00, costPerGram: 200/3000 }
+            { id: "3", name: "Nutella Balde", size: 3000, price: 200.00, costPerGram: 200/3000 },
+            { id: "4", name: "Leite Integral", size: 1000, price: 5.50, costPerGram: 5.50/1000 }
         ];
 
         const initialPackagings = [
@@ -357,14 +426,18 @@
         let ingredients = JSON.parse(localStorage.getItem('cianela_db_ingredients')) || initialIngredients;
         let packagings = JSON.parse(localStorage.getItem('cianela_db_packagings_lib')) || initialPackagings;
         
+        // Receitas base
         let recipe = JSON.parse(localStorage.getItem('cianela_db_current_recipe')) || [];
+        let syrupRecipe = JSON.parse(localStorage.getItem('cianela_db_current_syrup')) || [];
         let recipePacks = JSON.parse(localStorage.getItem('cianela_db_current_recipe_packs')) || [];
         let favoriteRecipes = JSON.parse(localStorage.getItem('cianela_db_favorites')) || [];
 
         const selectRecipeIngredient = document.getElementById('recipe-ingredient');
+        const selectSyrupIngredient = document.getElementById('syrup-ingredient');
         const selectRecipePackaging = document.getElementById('recipe-packaging-select');
         
         const recipeItemsContainer = document.getElementById('recipe-items-container');
+        const syrupItemsContainer = document.getElementById('syrup-items-container');
         const recipePacksContainer = document.getElementById('recipe-packs-container');
         
         const ingredientsGridContainer = document.getElementById('ingredients-grid-container');
@@ -373,14 +446,23 @@
         
         const inputRecipeName = document.getElementById('recipe-name');
         const inputYield = document.getElementById('var-yield');
+        const inputYieldUnit = document.getElementById('var-yield-unit');
         const inputTime = document.getElementById('var-time');
-        const inputPackaging = document.getElementById('var-packaging'); // Mantido oculto
+        
+        // Módulo 2 Controles
+        const inputSyrupBatchYield = document.getElementById('syrup-batch-yield');
+        const inputSyrupUsedVolume = document.getElementById('syrup-used-volume');
+        const lblSyrupCostPerMl = document.getElementById('lbl-syrup-cost-per-ml');
+        const lblSyrupFinalCost = document.getElementById('lbl-syrup-final-cost');
+
+        const inputPackaging = document.getElementById('var-packaging'); // Mantido oculto para compatibilidade
         const inputInvisible = document.getElementById('var-invisible');
         const inputLaborRate = document.getElementById('labor-rate');
         const inputLaborTime = document.getElementById('labor-time');
         const inputCmv = document.getElementById('var-cmv');
 
         const lblSubtotalIng = document.getElementById('lbl-subtotal-ingredients');
+        const lblSubtotalSyrup = document.getElementById('lbl-subtotal-syrup');
         const lblTotalPackaging = document.getElementById('lbl-total-packaging');
         const lblVarCost = document.getElementById('lbl-variables-cost');
         const lblLaborCost = document.getElementById('lbl-labor-cost');
@@ -397,10 +479,16 @@
 
         const formatBRL = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
+        // Inicialização de valores salvos
         inputRecipeName.value = localStorage.getItem('cianela_db_current_name') || "Nova Receita";
         inputYield.value = localStorage.getItem('cianela_db_yield') || 1;
+        inputYieldUnit.value = localStorage.getItem('cianela_db_yieldUnit') || "unid.";
         inputTime.value = localStorage.getItem('cianela_db_time') || "1h";
-        inputPackaging.value = localStorage.getItem('cianela_db_packaging') || "0.00";
+        
+        inputSyrupBatchYield.value = localStorage.getItem('cianela_db_syrup_yield') || 1;
+        inputSyrupUsedVolume.value = localStorage.getItem('cianela_db_syrup_used') || 1;
+
+        inputPackaging.value = localStorage.getItem('cianela_db_packaging') || "0.00"; 
         inputInvisible.value = localStorage.getItem('cianela_db_invisible') || 15;
         inputLaborRate.value = localStorage.getItem('cianela_db_laborRate') || "15.00";
         inputLaborTime.value = localStorage.getItem('cianela_db_laborTime') || 1;
@@ -419,7 +507,7 @@
             if(activeMobile) activeMobile.classList.add('active-tab');
         };
 
-        // GESTÃO DE INGREDIENTES
+        // GESTÃO DA BIBLIOTECA DE INGREDIENTES
         document.getElementById('form-ingredient').addEventListener('submit', function(e) {
             e.preventDefault();
             const name = document.getElementById('ing-name').value.trim();
@@ -432,10 +520,11 @@
         window.deleteIngredient = function(id) {
             ingredients = ingredients.filter(i => i.id !== id);
             recipe = recipe.filter(item => item.ingredient.id !== id);
+            syrupRecipe = syrupRecipe.filter(item => item.ingredient.id !== id);
             saveState(); renderAll();
         };
 
-        // GESTÃO DE EMBALAGENS (BIBLIOTECA)
+        // GESTÃO DA BIBLIOTECA DE EMBALAGENS
         document.getElementById('form-packaging-lib').addEventListener('submit', function(e) {
             e.preventDefault();
             const name = document.getElementById('pack-lib-name').value.trim();
@@ -451,7 +540,7 @@
             saveState(); renderAll();
         };
 
-        // GESTÃO DA RECEITA (INGREDIENTES)
+        // MÓDULO 1: ADICIONAR MASSA
         document.getElementById('form-recipe').addEventListener('submit', function(e) {
             e.preventDefault();
             const ingId = selectRecipeIngredient.value;
@@ -462,10 +551,22 @@
             if(existing) existing.qtd += qtd; else recipe.push({ ingredient: targetIng, qtd });
             saveState(); renderRecipeList(); calculateMaster(); document.getElementById('recipe-qtd').value = '';
         });
-
         window.removeRecipeItem = function(index) { recipe.splice(index, 1); saveState(); renderRecipeList(); calculateMaster(); };
 
-        // GESTÃO DA RECEITA (EMBALAGENS)
+        // MÓDULO 2: ADICIONAR CALDA
+        document.getElementById('form-syrup').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const ingId = selectSyrupIngredient.value;
+            const qtd = parseFloat(document.getElementById('syrup-qtd').value);
+            if(!ingId) return;
+            const targetIng = ingredients.find(i => i.id === ingId);
+            const existing = syrupRecipe.find(item => item.ingredient.id === ingId);
+            if(existing) existing.qtd += qtd; else syrupRecipe.push({ ingredient: targetIng, qtd });
+            saveState(); renderSyrupList(); calculateMaster(); document.getElementById('syrup-qtd').value = '';
+        });
+        window.removeSyrupItem = function(index) { syrupRecipe.splice(index, 1); saveState(); renderSyrupList(); calculateMaster(); };
+
+        // MÓDULO 3: ADICIONAR EMBALAGEM
         document.getElementById('form-recipe-pack').addEventListener('submit', function(e) {
             e.preventDefault();
             const packId = selectRecipePackaging.value;
@@ -476,31 +577,41 @@
             if(existing) existing.qtd += qtd; else recipePacks.push({ pack: targetPack, qtd });
             saveState(); renderRecipePacksList(); calculateMaster(); document.getElementById('recipe-pack-qtd').value = '';
         });
-
         window.removeRecipePack = function(index) { recipePacks.splice(index, 1); saveState(); renderRecipePacksList(); calculateMaster(); };
 
-        // LIMPAR
+        // LIMPAR TUDO
         window.clearRecipe = function() {
-            recipe = []; recipePacks = [];
-            inputRecipeName.value = "Nova Receita"; inputYield.value = 1; inputTime.value = "1h";
-            inputPackaging.value = "0.00"; inputInvisible.value = 15; inputLaborTime.value = 1; inputCmv.value = 35;
-            saveState(); renderRecipeList(); renderRecipePacksList(); calculateMaster();
+            recipe = []; syrupRecipe = []; recipePacks = [];
+            inputRecipeName.value = "Nova Receita"; 
+            inputYield.value = 1; inputYieldUnit.value = "unid.";
+            inputTime.value = "1h";
+            inputSyrupBatchYield.value = 1; inputSyrupUsedVolume.value = 1;
+            inputPackaging.value = "0.00"; 
+            inputInvisible.value = 15; 
+            inputLaborTime.value = 1; 
+            inputCmv.value = 35;
+            saveState(); renderRecipeList(); renderSyrupList(); renderRecipePacksList(); calculateMaster();
         };
-        
         document.getElementById('btn-clear-calculator').addEventListener('click', window.clearRecipe);
 
         // FAVORITOS
         window.saveCurrentToFavorites = function() {
-            if(recipe.length === 0) return alert("Sua receita está vazia!");
+            if(recipe.length === 0 && syrupRecipe.length === 0) return alert("Sua receita está vazia!");
             const recipeName = inputRecipeName.value.trim();
             if(recipeName === "" || recipeName === "Nova Receita") return alert("Dê um nome para a receita no topo.");
             const newFavorite = {
                 id: Date.now().toString(), 
                 name: recipeName, 
                 recipeData: JSON.parse(JSON.stringify(recipe)), 
-                recipePacksData: JSON.parse(JSON.stringify(recipePacks)), // Salva as embalagens da receita
+                syrupData: JSON.parse(JSON.stringify(syrupRecipe)), 
+                recipePacksData: JSON.parse(JSON.stringify(recipePacks)), 
                 yieldVal: parseFloat(inputYield.value), 
+                yieldUnit: inputYieldUnit.value,
                 timeVal: inputTime.value, 
+                
+                syrupBatchYield: parseFloat(inputSyrupBatchYield.value) || 1,
+                syrupUsedVolume: parseFloat(inputSyrupUsedVolume.value) || 0,
+                
                 packaging: parseFloat(inputPackaging.value),
                 invisibleRate: parseFloat(inputInvisible.value), 
                 laborRate: parseFloat(inputLaborRate.value),
@@ -517,17 +628,24 @@
             const fav = favoriteRecipes.find(f => f.id === id); if(!fav) return;
             inputRecipeName.value = fav.name; 
             recipe = JSON.parse(JSON.stringify(fav.recipeData));
-            recipePacks = fav.recipePacksData ? JSON.parse(JSON.stringify(fav.recipePacksData)) : []; // Puxa os dados ou inicia vazio
+            syrupRecipe = fav.syrupData ? JSON.parse(JSON.stringify(fav.syrupData)) : []; 
+            recipePacks = fav.recipePacksData ? JSON.parse(JSON.stringify(fav.recipePacksData)) : []; 
             
             inputYield.value = fav.yieldVal; 
+            inputYieldUnit.value = fav.yieldUnit || "unid.";
             inputTime.value = fav.timeVal || "1h"; 
-            inputPackaging.value = fav.packaging || "0.00"; // Puxa embalagem legada caso exista
+            
+            inputSyrupBatchYield.value = fav.syrupBatchYield || 1;
+            inputSyrupUsedVolume.value = fav.syrupUsedVolume !== undefined ? fav.syrupUsedVolume : 1;
+
+            inputPackaging.value = fav.packaging || "0.00"; 
             inputInvisible.value = fav.invisibleRate; 
             inputLaborRate.value = fav.laborRate || 15; 
             inputLaborTime.value = fav.laborTime || 1;
             inputCmv.value = fav.cmv || 35;
             
-            saveState(); switchTab('precificador'); renderRecipeList(); renderRecipePacksList(); calculateMaster();
+            saveState(); switchTab('precificador'); 
+            renderRecipeList(); renderSyrupList(); renderRecipePacksList(); calculateMaster();
         };
 
         window.deleteFavorite = function(id) {
@@ -536,14 +654,16 @@
 
         // RENDERIZAÇÕES GERAIS
         function renderAll() {
-            // Dropdowns
             selectRecipeIngredient.innerHTML = '<option value="">Selecione na biblioteca...</option>';
-            ingredients.forEach(i => selectRecipeIngredient.innerHTML += `<option value="${i.id}">${i.name}</option>`);
+            selectSyrupIngredient.innerHTML = '<option value="">Selecione na biblioteca...</option>';
+            ingredients.forEach(i => {
+                selectRecipeIngredient.innerHTML += `<option value="${i.id}">${i.name}</option>`;
+                selectSyrupIngredient.innerHTML += `<option value="${i.id}">${i.name}</option>`;
+            });
             
-            selectRecipePackaging.innerHTML = '<option value="">Selecione embalagem...</option>';
+            selectRecipePackaging.innerHTML = '<option value="">Selecione...</option>';
             packagings.forEach(p => selectRecipePackaging.innerHTML += `<option value="${p.id}">${p.name}</option>`);
 
-            // Tabelas de Insumos
             ingredientsGridContainer.innerHTML = '';
             ingredients.forEach(i => {
                 ingredientsGridContainer.innerHTML += `
@@ -568,19 +688,31 @@
             });
             kpiTotalPackagings.textContent = packagings.length;
 
-            renderRecipeList(); renderRecipePacksList(); renderFavorites(); calculateMaster();
+            renderRecipeList(); renderSyrupList(); renderRecipePacksList(); renderFavorites(); calculateMaster();
         }
 
         function renderRecipeList() {
-            recipeItemsContainer.innerHTML = recipe.length === 0 ? '<div class="text-xs text-gray-400 text-center py-4">Nenhum ingrediente adicionado.</div>' : '';
+            recipeItemsContainer.innerHTML = recipe.length === 0 ? '<div class="text-[10px] text-gray-400 text-center py-2">Nenhuma massa.</div>' : '';
             recipe.forEach((item, index) => {
                 const subTotal = (item.ingredient.costPerGram || 0) * item.qtd;
                 recipeItemsContainer.innerHTML += `
-                    <div class="flex items-center px-3 py-2 hover:bg-gray-50 rounded-lg group border border-transparent hover:border-gray-100">
-                        <div class="w-1/2"><p class="text-xs font-semibold text-gray-800 truncate pr-2">${item.ingredient.name}</p></div>
-                        <div class="w-1/6 text-center text-xs text-gray-500 font-mono">${item.qtd}g</div>
-                        <div class="w-1/6 text-center text-[10px] text-gray-400 font-mono">R$ ${(item.ingredient.costPerGram || 0).toFixed(3)}</div>
-                        <div class="w-1/6 text-right flex items-center justify-end gap-2"><span class="text-xs font-bold text-gray-800">${formatBRL(subTotal)}</span><button onclick="removeRecipeItem(${index})" class="text-gray-300 hover:text-red-500">X</button></div>
+                    <div class="flex items-center px-2 py-1.5 hover:bg-gray-50 rounded-lg group border border-transparent hover:border-gray-100">
+                        <div class="w-1/2"><p class="text-[11px] font-semibold text-gray-800 truncate pr-2">${item.ingredient.name}</p></div>
+                        <div class="w-1/4 text-center text-[11px] text-gray-500 font-mono">${item.qtd}g/ml</div>
+                        <div class="w-1/4 text-right flex items-center justify-end gap-2"><span class="text-[11px] font-bold text-gray-800">${formatBRL(subTotal)}</span><button onclick="removeRecipeItem(${index})" class="text-gray-300 hover:text-red-500 text-[10px]">X</button></div>
+                    </div>`;
+            });
+        }
+
+        function renderSyrupList() {
+            syrupItemsContainer.innerHTML = syrupRecipe.length === 0 ? '<div class="text-[10px] text-purple-300 text-center py-2">Nenhuma calda.</div>' : '';
+            syrupRecipe.forEach((item, index) => {
+                const subTotal = (item.ingredient.costPerGram || 0) * item.qtd;
+                syrupItemsContainer.innerHTML += `
+                    <div class="flex items-center px-2 py-1.5 hover:bg-purple-50 rounded-lg group border border-transparent hover:border-purple-100">
+                        <div class="w-1/2"><p class="text-[11px] font-semibold text-purple-900 truncate pr-2">${item.ingredient.name}</p></div>
+                        <div class="w-1/4 text-center text-[11px] text-purple-600 font-mono">${item.qtd}g/ml</div>
+                        <div class="w-1/4 text-right flex items-center justify-end gap-2"><span class="text-[11px] font-bold text-purple-900">${formatBRL(subTotal)}</span><button onclick="removeSyrupItem(${index})" class="text-purple-300 hover:text-red-500 text-[10px]">X</button></div>
                     </div>`;
             });
         }
@@ -604,11 +736,12 @@
         function renderFavorites() {
             favoritesGridContainer.innerHTML = favoriteRecipes.length === 0 ? '<div class="col-span-full text-center py-10 text-gray-400">Nenhuma receita salva.</div>' : '';
             favoriteRecipes.forEach(fav => {
+                const favUnit = fav.yieldUnit || "unid.";
                 favoritesGridContainer.innerHTML += `
                     <div class="bg-white border border-gray-200 p-5 rounded-2xl relative group shadow-sm">
                         <button onclick="deleteFavorite('${fav.id}')" class="absolute top-4 right-4 text-gray-300 hover:text-red-500">X</button>
                         <h3 class="font-bold text-gray-900 mb-1">${fav.name}</h3>
-                        <p class="text-xs text-gray-500 mb-4">Rende ${fav.yieldVal} und. • CMV: ${fav.cmv}%</p>
+                        <p class="text-xs text-gray-500 mb-4">Rende ${fav.yieldVal} ${favUnit} • CMV: ${fav.cmv}%</p>
                         <button onclick="loadFavorite('${fav.id}')" class="w-full py-2 bg-primary/10 text-primary rounded-xl text-sm font-bold hover:bg-primary hover:text-white transition-colors">Carregar</button>
                     </div>`;
             });
@@ -616,14 +749,23 @@
 
         // CÁLCULO MESTRE
         function calculateMaster() {
+            // Módulo 1 (Massa)
             const recipeBaseCost = recipe.reduce((acc, item) => acc + ((item.ingredient.costPerGram || 0) * item.qtd), 0);
             
-            // Soma as embalagens dinâmicas cadastradas + o antigo input caso a pessoa carregue uma receita legada
+            // Módulo 2 (Calda - Fracionamento)
+            const syrupBaseCost = syrupRecipe.reduce((acc, item) => acc + ((item.ingredient.costPerGram || 0) * item.qtd), 0);
+            const syrupYield = parseFloat(inputSyrupBatchYield.value) || 1;
+            const syrupUsed = parseFloat(inputSyrupUsedVolume.value) || 0;
+            const syrupCostPerMl = syrupBaseCost / syrupYield;
+            const syrupFinalCost = syrupCostPerMl * syrupUsed;
+            
+            // Módulo 3 (Embalagens)
             const dynamicPackagingCost = recipePacks.reduce((acc, item) => acc + ((item.pack.costPerUnit || 0) * item.qtd), 0);
             const legacyPackagingCost = parseFloat(inputPackaging.value) || 0;
             const packagingTotal = dynamicPackagingCost + legacyPackagingCost;
             
             const yieldVal = parseFloat(inputYield.value) || 1; 
+            const unitLabel = inputYieldUnit.value;
             const invisibleRate = parseFloat(inputInvisible.value) || 0; 
             const laborRate = parseFloat(inputLaborRate.value) || 0;
             const laborTime = parseFloat(inputLaborTime.value) || 0; 
@@ -631,35 +773,49 @@
 
             const variablesCost = recipeBaseCost * (invisibleRate / 100);
             const laborCostTotal = laborRate * laborTime;
-            const totalCostReceita = recipeBaseCost + packagingTotal + variablesCost + laborCostTotal;
             
-            // Fórmula do CMV: Preço de Venda = Custo Total / (CMV / 100)
+            // Custo Total soma o custo final da calda (fração) em vez da panela inteira
+            const totalCostReceita = recipeBaseCost + syrupFinalCost + packagingTotal + variablesCost + laborCostTotal;
+            
+            // Fórmula do CMV
             const totalSalePrice = totalCostReceita / (cmvTarget / 100);
             const totalProfit = totalSalePrice - totalCostReceita;
 
+            // Updates Visuais
             lblSubtotalIng.textContent = formatBRL(recipeBaseCost); 
+            
+            lblSubtotalSyrup.textContent = formatBRL(syrupBaseCost); 
+            lblSyrupCostPerMl.textContent = formatBRL(syrupCostPerMl);
+            lblSyrupFinalCost.textContent = formatBRL(syrupFinalCost);
+
             lblTotalPackaging.textContent = formatBRL(packagingTotal);
             lblVarCost.textContent = formatBRL(variablesCost); 
             lblLaborCost.textContent = formatBRL(laborCostTotal);
             
             resTotalCost.textContent = formatBRL(totalCostReceita); 
-            resUnitCost.textContent = `${formatBRL(totalCostReceita / yieldVal)} por unidade`;
+            resUnitCost.textContent = `${formatBRL(totalCostReceita / yieldVal)} por ${unitLabel}`;
             resUnitSalePrice.textContent = formatBRL(totalSalePrice / yieldVal); 
             resTotalRevenue.textContent = `Venda Total: ${formatBRL(totalSalePrice)}`;
             resTotalProfit.textContent = formatBRL(totalProfit); 
-            resUnitProfit.textContent = `(${formatBRL(totalProfit / yieldVal)} por unid.)`;
+            resUnitProfit.textContent = `(${formatBRL(totalProfit / yieldVal)} por ${unitLabel})`;
         }
 
         function saveState() {
             localStorage.setItem('cianela_db_ingredients', JSON.stringify(ingredients));
             localStorage.setItem('cianela_db_packagings_lib', JSON.stringify(packagings));
             localStorage.setItem('cianela_db_current_recipe', JSON.stringify(recipe));
+            localStorage.setItem('cianela_db_current_syrup', JSON.stringify(syrupRecipe));
             localStorage.setItem('cianela_db_current_recipe_packs', JSON.stringify(recipePacks));
             localStorage.setItem('cianela_db_favorites', JSON.stringify(favoriteRecipes));
             
             localStorage.setItem('cianela_db_current_name', inputRecipeName.value);
             localStorage.setItem('cianela_db_yield', inputYield.value); 
+            localStorage.setItem('cianela_db_yieldUnit', inputYieldUnit.value);
             localStorage.setItem('cianela_db_time', inputTime.value);
+            
+            localStorage.setItem('cianela_db_syrup_yield', inputSyrupBatchYield.value);
+            localStorage.setItem('cianela_db_syrup_used', inputSyrupUsedVolume.value);
+
             localStorage.setItem('cianela_db_packaging', inputPackaging.value); 
             localStorage.setItem('cianela_db_invisible', inputInvisible.value);
             localStorage.setItem('cianela_db_laborRate', inputLaborRate.value); 
@@ -667,7 +823,7 @@
             localStorage.setItem('cianela_db_cmv', inputCmv.value);
         }
 
-        [inputRecipeName, inputYield, inputTime, inputPackaging, inputInvisible, inputLaborRate, inputLaborTime, inputCmv].forEach(inp => {
+        [inputRecipeName, inputYield, inputYieldUnit, inputTime, inputSyrupBatchYield, inputSyrupUsedVolume, inputPackaging, inputInvisible, inputLaborRate, inputLaborTime, inputCmv].forEach(inp => {
             if(inp) inp.addEventListener('input', () => { calculateMaster(); saveState(); });
         });
 
